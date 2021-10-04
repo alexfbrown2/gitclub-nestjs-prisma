@@ -21,21 +21,19 @@ export const authorizeFactory = (
   //   authorizeLogger.info('data: ', data);
   const request = ctx.switchToHttp().getRequest();
   const user = request.user;
+  //   console.log('request.user');
+  //   console.log(user);
   const action = data || ctx.getHandler().name;
+  //   console.log('action');
+  //   console.log(action);
   const oso = request.oso;
   return async (resource: any) => {
-    // authorizeLogger.info(
-    //   'isAllowed: user: ',
-    //   user,
-    //   '; action: ',
-    //   action,
-    //   '; resource: ',
-    //   resource,
-    // );
+    console.log('CALLBACK');
+    console.log(user);
+    console.log(action);
+    console.log(resource);
     const isAllowed = await oso.isAllowed(user, action, resource);
-    // authorizeLogger.info('isAllowed: ', isAllowed);
     if (!isAllowed) {
-      //   authorizeLogger.info('is NOT allowed. Throwing ForbiddenException...');
       throw new ForbiddenException();
     }
   };

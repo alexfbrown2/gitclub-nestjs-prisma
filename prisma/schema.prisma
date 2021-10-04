@@ -4,15 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../database.sqlite"
-}
-
-model Issue {
-  id       Int    @id @default(autoincrement())
-  title    String
-  repoId   Int?
-  repo     Repo?  @relation(fields: [repoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  typename String @default("Issue")
+  url      = "file:./database.sqlite"
 }
 
 model Org {
@@ -55,9 +47,19 @@ model RepoRole {
   typename String @default("RepoRole")
 }
 
+model Issue {
+  id       Int    @id @default(autoincrement())
+  title    String
+  repoId   Int?
+  repo     Repo?  @relation(fields: [repoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  typename String @default("Issue")
+}
+
 model User {
   id       Int        @id @default(autoincrement())
   email    String     @unique
+  password String
+  name     String
   orgRole  OrgRole[]
   repoRole RepoRole[]
   typename String     @default("User")

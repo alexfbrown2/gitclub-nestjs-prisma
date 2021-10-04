@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { Oso, Relation } from 'oso';
 import { PrismaService } from '../prisma/prisma.service';
@@ -28,8 +29,6 @@ class User {
 
 @Injectable()
 export class OsoInstance extends Oso implements CanActivate {
-  private readonly init: Promise<void[]>;
-
   constructor(private prisma: PrismaService) {
     super();
 
@@ -120,11 +119,13 @@ export class OsoInstance extends Oso implements CanActivate {
         orgRole: new Relation('many', 'OrgRole', 'id', 'userId'),
       },
     });
+
+    this.loadFiles([`${__dirname}/authorization.polar`]);
   }
 
-  async initialized() {
-    await this.loadFiles(['./authorization.polar']);
-  }
+  //   async onModuleInit(): Promise<void> {
+  //     await this.loadFiles([`${__dirname}/authorization.polar`]);
+  //   }
 
   isaCheck = (name: string) => (i: any) =>
     i !== undefined && 'typename' in i && i.typename == name;

@@ -19,24 +19,37 @@ const create_org_dto_1 = require("./dto/create-org.dto");
 const basic_auth_guard_1 = require("../auth/basic-auth.guard");
 const oso_guard_1 = require("../oso/oso.guard");
 const oso_instance_1 = require("../oso/oso-instance");
+const prisma_service_1 = require("../prisma/prisma.service");
 let OrgsController = class OrgsController {
-    constructor(orgsService) {
+    constructor(orgsService, prisma) {
         this.orgsService = orgsService;
+        this.prisma = prisma;
     }
-    async listOrgs() {
-        return this.orgsService.orgs({});
+    async listOrgs(request) {
+        return await request.oso.authorizedResources(request.user, 'read', this.prisma.org);
     }
-    async createOrg(createOrgDto) {
-        return this.orgsService.createOrg(createOrgDto);
+    async createOrg(createOrgDto, authorize, request) {
+        await authorize({ typename: 'Org' }, false);
+        const org = await this.orgsService.createOrg(createOrgDto);
+        await this.prisma.orgRole.create({
+            data: { orgId: org.id, userId: request.user.id, role: 'owner' },
+        });
+        return org;
     }
     async getOrgById(id, authorize) {
         const org = await this.orgsService.org({ id: Number(id) });
-        console.log(org);
         await authorize(org);
-        return org ? org : undefined;
+        return org;
     }
-    async deleteOrg(id) {
-        return this.orgsService.deleteOrg({ id: Number(id) });
+    async deleteOrg(id, authorize) {
+        const orgToRemove = await this.orgsService.org({ id: Number(id) });
+        console.log(orgToRemove);
+        await authorize(orgToRemove);
+        return this.prisma.org.delete({
+            where: {
+                id: orgToRemove.id,
+            },
+        });
     }
     async getUnassignedUsers() {
         return this.orgsService.orgs({});
@@ -44,15 +57,18 @@ let OrgsController = class OrgsController {
 };
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrgsController.prototype, "listOrgs", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, oso_guard_1.Authorize)('create')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_org_dto_1.CreateOrgDto]),
+    __metadata("design:paramtypes", [create_org_dto_1.CreateOrgDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], OrgsController.prototype, "createOrg", null);
 __decorate([
@@ -66,8 +82,9 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, oso_guard_1.Authorize)('delete')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrgsController.prototype, "deleteOrg", null);
 __decorate([
@@ -79,7 +96,8 @@ __decorate([
 OrgsController = __decorate([
     (0, common_1.UseGuards)(basic_auth_guard_1.BasicAuthGuard, oso_instance_1.OsoInstance),
     (0, common_1.Controller)('orgs'),
-    __metadata("design:paramtypes", [orgs_service_1.OrgsService])
+    __metadata("design:paramtypes", [orgs_service_1.OrgsService,
+        prisma_service_1.PrismaService])
 ], OrgsController);
 exports.OrgsController = OrgsController;
 //# sourceMappingURL=orgs.controller.js.map

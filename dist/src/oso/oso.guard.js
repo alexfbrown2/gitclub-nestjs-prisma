@@ -22,12 +22,10 @@ const authorizeFactory = (data, ctx) => {
     const user = request.user;
     const action = data || ctx.getHandler().name;
     const oso = request.oso;
-    return async (resource) => {
-        console.log('CALLBACK');
-        console.log(user);
-        console.log(action);
-        console.log(resource);
-        const isAllowed = await oso.isAllowed(user, action, resource);
+    return async (resource, checkRead = true) => {
+        const isAllowed = await oso.isAllowed(user, action, resource, {
+            checkRead,
+        });
         if (!isAllowed) {
             throw new common_1.ForbiddenException();
         }

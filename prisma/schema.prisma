@@ -22,7 +22,7 @@ model OrgRole {
   role     String
   orgId    Int?
   userId   Int?
-  org      Org?   @relation(fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  org      Org?   @relation(fields: [orgId], references: [id])
   user     User?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   typename String @default("OrgRole")
 }

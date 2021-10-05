@@ -35,7 +35,7 @@ let OsoInstance = class OsoInstance extends oso_1.Oso {
     constructor(prisma) {
         super();
         this.prisma = prisma;
-        this.isaCheck = (name) => (i) => i !== undefined && 'typename' in i && i.typename == name;
+        this.isaCheck = (name) => (i) => i !== null && 'typename' in i && i.typename == name;
         this.combineQuery = (a, b) => {
             return {
                 OR: [a, b],
@@ -141,8 +141,39 @@ let OsoInstance = class OsoInstance extends oso_1.Oso {
         });
         this.loadFiles([`${__dirname}/authorization.polar`]);
     }
+    modelToClass(model) {
+        switch (model) {
+            case this.prisma.issue:
+                return Issue;
+            case this.prisma.org:
+                return Org;
+            case this.prisma.orgRole:
+                return OrgRole;
+            case this.prisma.repo:
+                return Repo;
+            case this.prisma.repoRole:
+                return RepoRole;
+            case this.prisma.user:
+                return User;
+            default:
+                throw new Error(`unexpected model: ${model}`);
+        }
+    }
     canActivate(context) {
-        context.switchToHttp().getRequest().oso = this;
+        const request = context.switchToHttp().getRequest();
+        request.oso = this;
+        function wrapFn(fn) {
+            return async function (actor, action, model) {
+                var cls = model;
+                if (!('prototype' in model)) {
+                    cls = this.modelToClass(model);
+                }
+                const res = await fn.call(request.oso, actor, action, cls);
+                return res;
+            };
+        }
+        request.oso.authorizedQuery = wrapFn(request.oso.authorizedQuery);
+        request.oso.authorizedResources = wrapFn(request.oso.authorizedResources);
         return true;
     }
     unauthorized() {

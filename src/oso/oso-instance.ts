@@ -143,10 +143,13 @@ export class OsoInstance extends Oso implements CanActivate {
   buildQuery = (constraints: any) => {
     const constrain = (query: any, c: any) => {
       if (c.field === undefined) {
-        // console.log(c);
+        console.log(c);
         c.field = 'id';
         c.value = c.kind == 'In' ? c.value.map((v) => v.id) : c.value.id;
       }
+      console.log(c.field);
+      console.log(c.value);
+      console.log(c.kind);
 
       let q;
 
@@ -155,6 +158,8 @@ export class OsoInstance extends Oso implements CanActivate {
       else if (c.kind === 'In') query[c.field] = { in: c.value };
       else throw new Error(`Unknown constraint kind: ${c.kind}`);
 
+      console.log('q');
+      console.log(q);
       return { AND: [query, q] };
     };
 

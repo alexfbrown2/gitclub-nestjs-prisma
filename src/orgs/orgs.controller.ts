@@ -14,7 +14,6 @@ import { CreateOrgDto } from './dto/create-org.dto';
 import { BasicAuthGuard } from '../auth/basic-auth.guard';
 import { Action, Authorize, OsoGuard, Resource } from '../oso/oso.guard';
 import { OsoInstance } from '../oso/oso-instance';
-import { Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 
 @UseGuards(BasicAuthGuard, OsoInstance)
@@ -73,8 +72,8 @@ export class OrgsController {
     });
   }
 
-  @Get('/:id/unassigned_users')
-  async getUnassignedUsers(): Promise<Org[]> {
-    return this.orgsService.orgs({});
-  }
+  //   @Get('/:id/unassigned_users')
+  //   async getUnassignedUsers(): Promise<Org[]> {
+  //     return this.orgsService.orgs({});
+  //   }
 }

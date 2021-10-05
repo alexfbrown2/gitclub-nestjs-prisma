@@ -10,5 +10,4 @@ export declare class OrgsController {
     createOrg(createOrgDto: CreateOrgDto, authorize: any, request: any): Promise<Org>;
     getOrgById(id: string, authorize: any): Promise<Org | null>;
     deleteOrg(id: string, authorize: any): Promise<Org>;
-    getUnassignedUsers(): Promise<Org[]>;
 }

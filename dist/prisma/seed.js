@@ -31,6 +31,11 @@ async function main() {
                     title: 'Too much critical acclaim',
                 },
             },
+            org: {
+                connect: {
+                    id: beatles.id,
+                },
+            },
         },
     });
     const paperwork = await prisma.repo.upsert({
@@ -38,6 +43,11 @@ async function main() {
         update: {},
         create: {
             name: 'Paperwork',
+            org: {
+                connect: {
+                    id: monsters.id,
+                },
+            },
         },
     });
     const john = await prisma.user.upsert({

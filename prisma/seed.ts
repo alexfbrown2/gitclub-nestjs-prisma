@@ -32,6 +32,11 @@ async function main() {
           title: 'Too much critical acclaim',
         },
       },
+      org: {
+        connect: {
+          id: beatles.id,
+        },
+      },
     },
   });
 
@@ -40,6 +45,11 @@ async function main() {
     update: {},
     create: {
       name: 'Paperwork',
+      org: {
+        connect: {
+          id: monsters.id,
+        },
+      },
     },
   });
 

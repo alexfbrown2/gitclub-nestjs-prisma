@@ -47,9 +47,13 @@ let OsoInstance = class OsoInstance extends oso_1.Oso {
         this.buildQuery = (constraints) => {
             const constrain = (query, c) => {
                 if (c.field === undefined) {
+                    console.log(c);
                     c.field = 'id';
                     c.value = c.kind == 'In' ? c.value.map((v) => v.id) : c.value.id;
                 }
+                console.log(c.field);
+                console.log(c.value);
+                console.log(c.kind);
                 let q;
                 if (c.kind === 'Eq')
                     q = { [c.field]: c.value };
@@ -59,6 +63,8 @@ let OsoInstance = class OsoInstance extends oso_1.Oso {
                     query[c.field] = { in: c.value };
                 else
                     throw new Error(`Unknown constraint kind: ${c.kind}`);
+                console.log('q');
+                console.log(q);
                 return { AND: [query, q] };
             };
             const q = constraints.reduce(constrain, {});

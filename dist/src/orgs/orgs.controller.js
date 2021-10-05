@@ -51,9 +51,6 @@ let OrgsController = class OrgsController {
             },
         });
     }
-    async getUnassignedUsers() {
-        return this.orgsService.orgs({});
-    }
 };
 __decorate([
     (0, common_1.Get)(),
@@ -87,12 +84,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrgsController.prototype, "deleteOrg", null);
-__decorate([
-    (0, common_1.Get)('/:id/unassigned_users'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], OrgsController.prototype, "getUnassignedUsers", null);
 OrgsController = __decorate([
     (0, common_1.UseGuards)(basic_auth_guard_1.BasicAuthGuard, oso_instance_1.OsoInstance),
     (0, common_1.Controller)('orgs'),

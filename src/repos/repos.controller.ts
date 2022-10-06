@@ -35,6 +35,7 @@ export class ReposController {
       'read',
       this.prisma.repo,
     );
+    console.log(JSON.stringify(repoFilter, null, 2));
     return this.prisma.repo.findMany({
       where: {
         AND: [repoFilter, { orgId: Number(orgId) }],

@@ -26,6 +26,7 @@ let ReposController = class ReposController {
     async listRepos(orgId, request) {
         console.log('listing repos');
         const repoFilter = await request.oso.authorizedQuery(request.user, 'read', this.prisma.repo);
+        console.log(JSON.stringify(repoFilter, null, 2));
         return this.prisma.repo.findMany({
             where: {
                 AND: [repoFilter, { orgId: Number(orgId) }],
